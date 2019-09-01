@@ -2,7 +2,10 @@
 title: "Activity 1.2 - RStudio and R Markdown"
 author: "Ari Roberson"
 date: "8/29/2019"
-output: html_document
+output: 
+  html_document: 
+    fig_height: 7
+    fig_width: 10
 ---
 
 ### Load packages
@@ -14,13 +17,9 @@ library(datasauRus)
 
 ### Exercise 1
 
-(Type your answer to Exercise 1 here. This exercise does not require any R code.)
+The datasaurus_dozen file has 1846 rows and 3 columns (the number of variables represents the number of columns). The variables are "dataset", "x", and "y" .
 
 ### Exercise 2
-
-(The answers for this Exercise are given for you below. But you should clean up some of the narrative so that it only includes what you want to turn in.)
-
-First let's plot the data in the dino dataset:
 
 ```{r plot-dino, fig.height=3, fig.width=6}
 dino_data <- datasaurus_dozen %>%
@@ -30,41 +29,67 @@ ggplot(data = dino_data, mapping = aes(x = x, y = y)) +
   geom_point()
 ```
 
-And next calculate the correlation between `x` and `y` in this dataset:
-
 ```{r cor-dino}
 dino_data %>%
   summarize(r = cor(x, y))
 ```
+This r value indicates that `x` and `y` have an extremely weak, negative linear relationship. It is not capable of telling us exactly how `x` and `y` ARE related, such as, that they create the image of a dino.
 
 ### Exercise 3
 
-(Add code and narrative as needed. Note that the R chunks are labeled with `plot-star` and `cor-star` to provide spaces to place the code for plotting and calculating the correlation coefficient. To finish, clean up the narrative by removing these instructions.)
-
-Blah blah blah...
-
 ```{r plot-star}
+star_data <- datasaurus_dozen %>%
+  filter(dataset == "star")
 
+ggplot(data = star_data, mapping = aes(x = x, y = y)) +
+  geom_point()
 ```
 
-I'm some text, you should replace me with more meaningful text...
+The datasuarus_dozen data frame is now being filtered for observations where the data is related to star. The following code plots the star created by the star_data data set.
 
 ```{r cor-star}
-
+star_data %>%
+  summarize(r = cor(x, y))
 ```
+
+The correlation coefficient is very similar to the dino. They are both about -0.06 yet have very different visuals. Because they are shapes rather than functions, the correlation coefficient does not provide much information about the data set.
 
 ### Exercise 4
 
 (Add code and narrative as needed. Note that two R chunks are given but they are not labeled. Use the convention from above to name them appropriately.)
 
 ```{r}
+circle_data <- datasaurus_dozen %>%
+  filter(dataset == "circle")
 
+ggplot(data = circle_data, mapping = aes(x = x, y = y)) +
+  geom_point()
 ```
 
 ```{r}
-
+circle_data %>%
+  summarize(r = cor(x, y))
 ```
+
+Filtering the data frame to only use data with name "circle" allows the circle to be used. The next plot of code plots the circle with the filtered data. The r value for the circle is also -0.06 even with the difference in physical appearance.
 
 ### Exercise 5
 
-(Add code and narrative as needed. To add R chunks either type out the backticks, curly braces, and the letter `r` or use the Insert chunk button above, green C+.)
+```{r}
+ggplot(data = datasaurus_dozen, aes(x = x, y = y, color = dataset)) +
+  geom_point() +
+  facet_wrap(~ dataset, ncol = 5) +
+  theme(legend.position = "left")
+```
+
+The `color = data` made each of the datasets a different color, the one they were each set to be. The `ncol = 3` organized the plots into 3 columns. Changing this number would alter the number of columns in which the plots appear. The `facet_wrap()`split the plot into multiple plots so each of the data sets could be seen individually. The `theme(legend.position = "none")` positions the legend for the plots if there was one. The term `none` makes the legend not appear at all. However, it could go at the `top`, `bottom`, `left`, or `right`.
+
+```{r}
+datasaurus_dozen %>%
+  group_by(dataset) %>%
+  summarize(r = cor(x,y)) %>%
+  print(13)
+```
+
+This section of code calculates each r value according to dataset and lists all of them. Each of the correlation coefficients are between -0.07 and -0.06 yet look almost nothing alike, showing that r does not give any information about the picutre of the plots except that they have close to no linear relationship.
+
